@@ -1,5 +1,14 @@
 #include "raylib.h"
 
+struct AnimData
+{
+    Rectangle rec;
+    Vector2 pos;
+    int frame;
+    float updateTime;
+    float runningTime;
+};
+
 int main()
 {
     // window dimensions
@@ -14,24 +23,22 @@ int main()
 
     // scarfy model
     Texture2D scarfy = LoadTexture("textures/scarfy.png");
+    AnimData scarfyData;
+    scarfyData.rec.width = scarfyData.rec.width / 6;
+    scarfyData.rec.height = scarfyData.rec.height;
+    scarfyData.rec.x = 0;
+    scarfyData.rec.y = 0;
+    scarfyData.pos.x = windowWidth / 2 - scarfyData.rec.width / 2;
+    scarfyData.pos.y = windowHeight - scarfyData.rec.height;
+    scarfyData.frame = 0;
+    scarfyData.updateTime = 1.0 / 12.0;
+    scarfyData.runningTime = 0;
+
     Rectangle scarfyRec;
     scarfyRec.x = 0;
     scarfyRec.y = 0;
     scarfyRec.width = scarfy.width / 6;
     scarfyRec.height = scarfy.height;
-
-    // nebula model
-    Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
-    Rectangle nebRec{0.0, 0.0, nebula.width / 8.0f, nebula.height / 8.0f};
-    Vector2 nebPos{windowWidth, windowHeight - nebRec.height};
-
-    // nebula x velocity (pixels/second)
-    int nebVel{-400};
-
-    // nebula animation variables
-    int nebFrame{};
-    const float nebUpdateTime{1.0 / 12.0};
-    float nebRunningTime{};
 
     // scarfy position
     Vector2 scarfyPos;
@@ -46,6 +53,19 @@ int main()
     int frame{};
     const float updateTime{1.0 / 12.0};
     float runningTime{};
+
+    // nebula model
+    Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
+    Rectangle nebRec{0.0, 0.0, nebula.width / 8.0f, nebula.height / 8.0f};
+    Vector2 nebPos{windowWidth, windowHeight - nebRec.height};
+
+    // nebula x velocity (pixels/second)
+    int nebVel{-400};
+
+    // nebula animation variables
+    int nebFrame{};
+    const float nebUpdateTime{1.0 / 12.0};
+    float nebRunningTime{};
 
     // is scarfy in air?
     bool isInAir{};
