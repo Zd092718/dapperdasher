@@ -15,27 +15,35 @@ int main()
     // scarfy model
     Texture2D scarfy = LoadTexture("textures/scarfy.png");
     Rectangle scarfyRec;
-    scarfyRec.width = scarfy.width / 6;
-    scarfyRec.height = scarfy.height;
     scarfyRec.x = 0;
     scarfyRec.y = 0;
+    scarfyRec.width = scarfy.width / 6;
+    scarfyRec.height = scarfy.height;
+
+    // nebula model
+    Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
+    Rectangle nebRec{0.0, 0.0, nebula.width / 8.0f, nebula.height / 8.0f};
+    Vector2 nebPos{windowWidth, windowHeight - nebRec.height};
+
+    // nebula x velocity (pixels/second)
+    int nebVel{-400};
+
+    // nebula animation variables
+    int nebFrame{};
+    const float nebUpdateTime{1.0 / 12.0};
+    float nebRunningTime{};
 
     // scarfy position
     Vector2 scarfyPos;
     scarfyPos.x = windowWidth / 2 - scarfyRec.width / 2;
     scarfyPos.y = windowHeight - scarfyRec.height;
 
-    // nebula model
-    Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
-    Rectangle nebulaRec;
-
-    // pixels per second
+    // jump pixels per second
     const int jumpVel{-600};
     int velocity{0};
 
-    // animation frame
+    // scarfy animation variables
     int frame{};
-
     const float updateTime{1.0 / 12.0};
     float runningTime{};
 
@@ -70,22 +78,47 @@ int main()
         {
             velocity += jumpVel;
         }
-        // update y postion
+        // update nebula position
+        nebPos.x += nebVel * dt;
+
+        // update scarfy postion
         scarfyPos.y += velocity * dt;
 
-        // update running time
-        runningTime = runningTime + dt;
-        if (runningTime >= updateTime)
+        // update scarfy's animation frame
+        if (!isInAir)
         {
-            // update animation frame
-            runningTime = 0.0;
-            scarfyRec.x = frame * scarfyRec.width;
-            frame++;
-            if (frame > 5)
+            // update running time
+            runningTime += dt;
+            if (runningTime >= updateTime)
             {
-                frame = 0;
+                // update animation frame
+                runningTime = 0.0;
+                scarfyRec.x = frame * scarfyRec.width;
+                frame++;
+                if (frame > 5)
+                {
+                    frame = 0;
+                }
             }
         }
+
+        // update nebula running time
+        nebRunningTime += dt;
+        if (nebRunningTime >= nebUpdateTime)
+        {
+            nebRunningTime = 0.0;
+            nebRec.x = nebFrame * nebRec.width;
+            nebFrame++;
+            if (nebFrame > 7)
+            {
+                nebFrame = 0;
+            }
+        }
+
+        // draw nebula
+        DrawTextureRec(nebula, nebRec, nebPos, WHITE);
+
+        // draw scarfy
         DrawTextureRec(scarfy, scarfyRec, scarfyPos, WHITE);
 
         EndDrawing();
